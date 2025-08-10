@@ -1,10 +1,14 @@
 {
-  "manifest_version": 1,
-  "id": "daggerheart-ranges",
   "name": "Daggerheart Ranges",
-  "version": "1.0.0",
+  "version": "1.0.4",
+  "manifest_version": 1,
   "description": "Zeigt farbige Ranges um ein Token, mit einstellbarer Füllung.",
-  "icon": "/icon.svg",
-  "scripts": [],
-  "ui": "/index.html"
+  "icon": "https://joey-alt-1468.github.io/daggerheart-ranges/icon.svg",
+  "action": {
+    "title": "Daggerheart Ranges",
+    "icon": "https://joey-alt-1468.github.io/daggerheart-ranges/icon.svg",
+    "popover": "https://joey-alt-1468.github.io/daggerheart-ranges/index.html",
+    "width": 360,
+    "height": 300
+  }
 }
