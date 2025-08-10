@@ -1,6 +1,5 @@
-// UMD SDK (per <script src="https://unpkg.com/@owlbear-rodeo/sdk@2"></script> in index.html)
-const OBR = window.OBR;
-const { buildShape, isShape } = OBR;
+// ESM: SDK importieren (esm.sh ist stabil, oft weniger geblockt als unpkg)
+import OBR, { buildShape, isShape } from "https://esm.sh/@owlbear-rodeo/sdk@2";
 
 const NS = "dh-ranges";
 const META_KEY = `${NS}/ring`;
@@ -54,8 +53,7 @@ async function removeRingsFor(tokenId) {
 }
 
 async function addRingsFor(token, radiiSquares, colors) {
-  const dpi = await OBR.scene.grid.getDpi();     // Pixel pro Feld
-  if (!dpi || isNaN(dpi)) throw new Error("Grid DPI nicht verfügbar.");
+  const dpi = await OBR.scene.grid.getDpi();
   const center = token.position;
   const items = radiiSquares.map((sq, idx) =>
     ringItem({ center, radiusPx: dpi * sq, color: colors[idx], attachedTo: token.id })
@@ -67,26 +65,16 @@ async function toggleForToken(token) {
   const cfg = readConfig();
   const attached = await OBR.scene.items.getItemAttachments([token.id]);
   const hasAny = attached.some(i => i?.metadata?.[META_KEY]);
-  if (hasAny) {
-    await removeRingsFor(token.id);
-    await OBR.notification.show("Ranges entfernt.");
-  } else {
-    await addRingsFor(token, cfg.radii, cfg.colors);
-    await OBR.notification.show("Ranges hinzugefügt.");
-  }
+  if (hasAny) await removeRingsFor(token.id);
+  else await addRingsFor(token, cfg.radii, cfg.colors);
 }
 
 async function onApplyClick() {
-  try {
-    const sel = await OBR.player.getSelection();
-    if (!sel?.length) { await OBR.notification.show("Bitte zuerst EIN Token auswählen."); return; }
-    const [item] = await OBR.scene.items.getItems([sel[0]]);
-    if (!item) { await OBR.notification.show("Kein gültiges Item ausgewählt."); return; }
-    await toggleForToken(item);
-  } catch (e) {
-    console.error(e);
-    await OBR.notification.show("Fehler beim Anwenden (siehe Console).");
-  }
+  const sel = await OBR.player.getSelection();
+  if (!sel?.length) { await OBR.notification.show("Bitte zuerst EIN Token auswählen."); return; }
+  const [item] = await OBR.scene.items.getItems([sel[0]]);
+  if (!item) { await OBR.notification.show("Kein gültiges Item."); return; }
+  await toggleForToken(item);
 }
 
 async function ensureContextMenu() {
@@ -95,14 +83,9 @@ async function ensureContextMenu() {
       id: CTX_ID,
       icons: [{ icon: "/icon.svg", label: "Toggle Ranges" }],
       onClick: async (ctx) => {
-        try {
-          const token = ctx.items?.[0];
-          if (!token) { await OBR.notification.show("Bitte ein Token rechtsklicken."); return; }
-          await toggleForToken(token);
-        } catch (e) {
-          console.error(e);
-          await OBR.notification.show("Fehler (siehe Console).");
-        }
+        const token = ctx.items?.[0];
+        if (!token) { await OBR.notification.show("Bitte ein Token rechtsklicken."); return; }
+        await toggleForToken(token);
       },
     });
   } catch { /* schon registriert */ }
@@ -111,23 +94,14 @@ async function ensureContextMenu() {
 function wireUI() {
   const applyBtn = document.getElementById("apply");
   const regBtn   = document.getElementById("register");
-
-  if (applyBtn) {
-    applyBtn.addEventListener("click", onApplyClick);
-  }
-  if (regBtn) {
-    regBtn.addEventListener("click", async () => {
-      await ensureContextMenu();
-      await OBR.notification.show("Kontextmenü 'Toggle Ranges' aktiv.");
-    });
-  }
+  if (applyBtn) applyBtn.addEventListener("click", onApplyClick);
+  if (regBtn)   regBtn.addEventListener("click", async () => {
+    await ensureContextMenu();
+    await OBR.notification.show("Kontextmenü 'Toggle Ranges' aktiv.");
+  });
 }
 
-// Reihenfolge: erst DOM da, dann OBR ready → dann UI verdrahten
-document.addEventListener("DOMContentLoaded", () => {
-  OBR.onReady(async () => {
-    wireUI();
-    await ensureContextMenu();
-    try { await OBR.notification.show("Daggerheart Ranges geladen. Rechtsklick → Toggle Ranges."); } catch {}
-  });
+OBR.onReady(async () => {
+  wireUI();              // Buttons im Popover
+  await ensureContextMenu(); // Rechtsklick-Eintrag sofort
 });
