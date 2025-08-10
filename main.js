@@ -1,12 +1,15 @@
-// ESM: SDK importieren (esm.sh ist stabil, oft weniger geblockt als unpkg)
+// ESM: SDK von esm.sh laden (stabil in Owlbear)
 import OBR, { buildShape, isShape } from "https://esm.sh/@owlbear-rodeo/sdk@2";
 
 const NS = "dh-ranges";
 const META_KEY = `${NS}/ring`;
 const CTX_ID = `${NS}/toggle`;
 
-const DEFAULT_RADII  = [1, 3, 6, 12];
-const DEFAULT_COLORS = ["#f2c94c", "#27ae60", "#2d9cdb", "#9b51e0"];
+// Defaults
+const DEFAULT_RADII  = [1, 3, 6, 12]; // in Feldern (Grid)
+const DEFAULT_COLORS = ["#f2c94c", "#27ae60", "#2d9cdb", "#9b51e0"]; // gelb/grün/blau/violett
+const FILL_OPACITY   = 0.18; // 0..1 – Stärke der Flächenfüllung
+const STROKE_WIDTH   = 3;
 
 function readConfig() {
   const r1 = document.getElementById("r1");
@@ -38,8 +41,9 @@ function ringItem({ center, radiusPx, color, attachedTo }) {
     .attachedTo(attachedTo)
     .strokeColor(color)
     .strokeOpacity(1)
-    .strokeWidth(3)
-    .fillOpacity(0)
+    .strokeWidth(STROKE_WIDTH)
+    .fillColor(color)          // gleiche Farbe wie der Rand …
+    .fillOpacity(FILL_OPACITY) // … aber halbtransparent
     .layer("ATTACHMENT")
     .metadata({ [META_KEY]: true })
     .name("DH Range")
@@ -53,11 +57,18 @@ async function removeRingsFor(tokenId) {
 }
 
 async function addRingsFor(token, radiiSquares, colors) {
-  const dpi = await OBR.scene.grid.getDpi();
+  const dpi = await OBR.scene.grid.getDpi(); // Pixel je Feld
   const center = token.position;
-  const items = radiiSquares.map((sq, idx) =>
-    ringItem({ center, radiusPx: dpi * sq, color: colors[idx], attachedTo: token.id })
+
+  // Größte Zone zuerst zeichnen, dann kleinere obendrauf => klar getrennte Bänder
+  const pairs = radiiSquares
+    .map((sq, i) => ({ squares: sq, color: colors[i] }))
+    .sort((a, b) => b.squares - a.squares); // absteigend
+
+  const items = pairs.map(({ squares, color }) =>
+    ringItem({ center, radiusPx: dpi * squares, color, attachedTo: token.id })
   );
+
   await OBR.scene.items.addItems(items);
 }
 
@@ -73,7 +84,7 @@ async function onApplyClick() {
   const sel = await OBR.player.getSelection();
   if (!sel?.length) { await OBR.notification.show("Bitte zuerst EIN Token auswählen."); return; }
   const [item] = await OBR.scene.items.getItems([sel[0]]);
-  if (!item) { await OBR.notification.show("Kein gültiges Item."); return; }
+  if (!item) { await OBR.notification.show("Kein gültiges Token."); return; }
   await toggleForToken(item);
 }
 
@@ -88,7 +99,7 @@ async function ensureContextMenu() {
         await toggleForToken(token);
       },
     });
-  } catch { /* schon registriert */ }
+  } catch {/* schon registriert */}
 }
 
 function wireUI() {
@@ -102,6 +113,6 @@ function wireUI() {
 }
 
 OBR.onReady(async () => {
-  wireUI();              // Buttons im Popover
-  await ensureContextMenu(); // Rechtsklick-Eintrag sofort
+  wireUI();              // Buttons im Fenster
+  await ensureContextMenu(); // Rechtsklick sofort verfügbar
 });
