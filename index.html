@@ -38,12 +38,9 @@
       <button id="register">Add “Toggle Ranges” to context menu</button>
     </div>
 
-    <script type="module" src="./main.js"></script>
-    <script>
-      setTimeout(() => {
-        const el = document.getElementById('fallback');
-        if (el) el.style.display = 'block';
-      }, 1200);
-    </script>
+    <!-- SDK als UMD, kein ES-Module -->
+    <script src="https://unpkg.com/@owlbear-rodeo/sdk@2"></script>
+    <script src="./main.js"></script>
+
   </body>
 </html>
