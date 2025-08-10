@@ -51,10 +51,11 @@ function ringItem({ center, radiusPx, color, fillOpacity }) {
     .strokeWidth(STROKE_WIDTH)
     .fillColor(color)
     .fillOpacity(isFinite(fillOpacity) ? fillOpacity : 0.18)
-    .layer("ATTACHMENT")
+    .layer("MAP") // Ganz unten unter Tokens
     .locked(true)
     .visible(true)
-    .metadata({ [META_KEY]: true, [`${NS}/noHit`]: true })
+    .disableHit(true) // Keine Klicks blockieren
+    .metadata({ [META_KEY]: true })
     .name("DH Range")
     .build();
 }
