@@ -1,25 +1,17 @@
-// SDK laden (mit Fallback, falls unpkg geblockt ist)
-async function loadOBR() {
-  try {
-    return await import("https://unpkg.com/@owlbear-rodeo/sdk@2?module");
-  } catch (e) {
-    return await import("https://esm.sh/@owlbear-rodeo/sdk@2?bundle");
-  }
-}
-const { default: OBR, buildShape, isShape } = await loadOBR();
+// UMD: SDK liegt global auf window.OBR
+const OBR = window.OBR;
+const { buildShape, isShape } = OBR;
 
 const NS = "dh-ranges";
 const META_KEY = `${NS}/ring`;
 const CTX_ID = `${NS}/toggle`;
 
-// Default-Konfig, falls das Popover nicht offen ist
-const DEFAULT_RADII = [1, 3, 6, 12]; // Felder
+const DEFAULT_RADII = [1, 3, 6, 12];
 const DEFAULT_COLORS = ["#f2c94c", "#27ae60", "#2d9cdb", "#9b51e0"];
 
 function readConfig() {
   const r1 = document.getElementById("r1");
   if (r1) {
-    // UI ist offen → Werte von dort lesen
     return {
       radii: [
         parseInt(document.getElementById("r1").value, 10),
@@ -35,7 +27,6 @@ function readConfig() {
       ],
     };
   }
-  // kein UI → Defaults
   return { radii: DEFAULT_RADII, colors: DEFAULT_COLORS };
 }
 
@@ -63,7 +54,7 @@ async function removeRingsFor(tokenId) {
 }
 
 async function addRingsFor(token, radiiSquares, colors) {
-  const dpi = await OBR.scene.grid.getDpi(); // Pixel je Feld
+  const dpi = await OBR.scene.grid.getDpi();
   const center = token.position;
   const items = radiiSquares.map((sq, idx) =>
     ringItem({ center, radiusPx: dpi * sq, color: colors[idx], attachedTo: token.id })
@@ -79,7 +70,6 @@ async function toggleForToken(token) {
   else await addRingsFor(token, cfg.radii, cfg.colors);
 }
 
-// Popover-Buttons weiterhin unterstützen (falls geöffnet)
 function wirePopoverButtons() {
   const apply = document.getElementById("apply");
   if (apply) {
@@ -93,4 +83,28 @@ function wirePopoverButtons() {
   }
   const reg = document.getElementById("register");
   if (reg) {
-    reg.addEventListen
+    reg.addEventListener("click", async () => {
+      await ensureContextMenu();
+      await OBR.notification.show("Kontextmenü 'Toggle Ranges' ist aktiv.");
+    });
+  }
+}
+
+async function ensureContextMenu() {
+  try {
+    await OBR.contextMenu.create({
+      id: CTX_ID,
+      icons: [{ icon: "/icon.svg", label: "Toggle Ranges" }],
+      onClick: async (ctx) => {
+        const token = ctx.items?.[0];
+        if (!token) { await OBR.notification.show("Bitte ein Token rechtsklicken."); return; }
+        await toggleForToken(token);
+      },
+    });
+  } catch (_) { /* bereits registriert */ }
+}
+
+OBR.onReady(async () => {
+  await ensureContextMenu();
+  wirePopoverButtons();
+});
