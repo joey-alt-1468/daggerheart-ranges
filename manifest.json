@@ -1,0 +1,14 @@
+{
+  "name": "Daggerheart Ranges",
+  "version": "1.0.1",
+  "manifest_version": 1,
+  "description": "Zeigt farbige Range-Ringe um ausgewählte Tokens (Very Close, Close, Far, Very Far).",
+  "icon": "/icon.svg",
+  "action": {
+    "title": "Daggerheart Ranges",
+    "icon": "/icon.svg",
+    "popover": "/index.html",
+    "width": 340,
+    "height": 280
+  }
+}
