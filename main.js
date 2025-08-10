@@ -5,7 +5,7 @@ const NS = "dh-ranges";
 const META_KEY = `${NS}/ring`;
 const CTX_ID = `${NS}/toggle`;
 
-const DEFAULT_RADII     = [1, 3, 6, 12];                         // in Grid-Einheiten (bei dir: inch)
+const DEFAULT_RADII     = [2, 6, 20, 60];                         
 const DEFAULT_COLORS    = ["#f2c94c", "#27ae60", "#2d9cdb", "#9b51e0"];
 const DEFAULT_OPACITIES = [0.18, 0.18, 0.18, 0.18];
 const STROKE_WIDTH      = 3;
