@@ -1,6 +1,6 @@
 {
   "name": "Daggerheart Ranges",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "manifest_version": 1,
   "description": "Zeigt farbige Ranges um ein Token, mit einstellbarer Füllung.",
   "icon": "https://joey-alt-1468.github.io/daggerheart-ranges/icon.svg",
