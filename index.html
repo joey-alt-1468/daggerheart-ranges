@@ -1,46 +1,77 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Daggerheart Ranges</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      :root { font-family: system-ui, sans-serif; }
-      body { margin: 12px; }
-      fieldset { border:1px solid #ddd; border-radius:10px; padding:10px 12px; }
-      legend { color:#444; }
-      .row { display:grid; grid-template-columns: 1fr 90px 90px; gap:8px; align-items:center; margin-bottom:8px; }
-      label { font-size:12px; color:#444; }
-      input[type="number"]{ width:80px; }
-      .btns { display:flex; gap:8px; margin-top:10px; }
-      button { padding:8px 10px; border-radius:8px; border:1px solid #ccc; cursor:pointer; }
-      .hint { color:#666; font-size:12px; margin-top:6px; }
-      #fallback { padding:10px; background:#fff7cc; border:1px solid #ffe083; border-radius:8px; margin-bottom:10px; display:none; }
-    </style>
-  </head>
-  <body>
-    <div id="fallback">Hinweis: Diese Seite ist außerhalb von Owlbear geöffnet – das UI funktioniert nur im Owlbear-Popover (Add Extension → manifest.json URL eintragen).</div>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daggerheart Ranges</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 10px;
+      background: #222;
+      color: white;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 60px 60px 60px;
+      gap: 5px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    label {
+      font-size: 14px;
+    }
+    input[type="number"], input[type="color"] {
+      width: 100%;
+    }
+    button {
+      padding: 6px 10px;
+      font-size: 14px;
+      margin-right: 5px;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #666;
+    }
+  </style>
+</head>
+<body>
+  <h2>Daggerheart Ranges</h2>
 
-    <h3 style="margin:0 0 8px">Daggerheart Ranges</h3>
-    <p style="margin:0 0 10px;color:#555">Wähle ein Token & klicke „Apply“. Nochmal klicken = Ringe löschen.</p>
+  <div class="row">
+    <label>Very Close</label>
+    <input id="r1" type="number" value="1" min="1" step="1"/>
+    <input id="c1" type="color" value="#f2c94c"/>
+    <input id="o1" type="number" value="0.18" min="0" max="1" step="0.02" />
+  </div>
+  <div class="row">
+    <label>Close</label>
+    <input id="r2" type="number" value="3" min="1" step="1"/>
+    <input id="c2" type="color" value="#27ae60"/>
+    <input id="o2" type="number" value="0.18" min="0" max="1" step="0.02" />
+  </div>
+  <div class="row">
+    <label>Far</label>
+    <input id="r3" type="number" value="6" min="1" step="1"/>
+    <input id="c3" type="color" value="#2d9cdb"/>
+    <input id="o3" type="number" value="0.18" min="0" max="1" step="0.02" />
+  </div>
+  <div class="row">
+    <label>Very Far</label>
+    <input id="r4" type="number" value="12" min="1" step="1"/>
+    <input id="c4" type="color" value="#9b51e0"/>
+    <input id="o4" type="number" value="0.18" min="0" max="1" step="0.02" />
+  </div>
 
-    <fieldset>
-      <legend>Ringe (Felder & Farbe)</legend>
-      <div class="row"><label>Very Close</label><input id="r1" type="number" value="1" min="1" step="1"/><input id="c1" type="color" value="#f2c94c"/></div>
-      <div class="row"><label>Close</label><input id="r2" type="number" value="3" min="1" step="1"/><input id="c2" type="color" value="#27ae60"/></div>
-      <div class="row"><label>Far</label><input id="r3" type="number" value="6" min="1" step="1"/><input id="c3" type="color" value="#2d9cdb"/></div>
-      <div class="row"><label>Very Far</label><input id="r4" type="number" value="12" min="1" step="1"/><input id="c4" type="color" value="#9b51e0"/></div>
-      <div class="hint">Tipp: Werte sind „Felder“ (Grid-Kästchen). Passe sie an euren Maßstab an.</div>
-    </fieldset>
+  <div style="margin-top: 10px;">
+    <button id="apply">Apply to Selection</button>
+    <button id="register">Register Context Menu</button>
+  </div>
 
-    <div class="btns">
-      <button id="apply">Apply to selection</button>
-      <button id="register">Add “Toggle Ranges” to context menu</button>
-    </div>
-
-<!-- am Ende von <body> -->
-<script type="module" src="./main.js"></script>
-
-
-  </body>
+  <script type="module" src="./main.js"></script>
+</body>
 </html>
