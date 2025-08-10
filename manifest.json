@@ -1,13 +1,13 @@
 {
   "name": "Daggerheart Ranges",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "manifest_version": 1,
   "description": "Zeigt farbige Range-Ringe um ausgewählte Tokens (Very Close, Close, Far, Very Far).",
-  "icon": "/icon.svg",
+  "icon": "https://joey-alt-1468.github.io/daggerheart-ranges/icon.svg",
   "action": {
     "title": "Daggerheart Ranges",
-    "icon": "/icon.svg",
-    "popover": "/index.html",
+    "icon": "https://joey-alt-1468.github.io/daggerheart-ranges/icon.svg",
+    "popover": "https://joey-alt-1468.github.io/daggerheart-ranges/index.html",
     "width": 340,
     "height": 280
   }
